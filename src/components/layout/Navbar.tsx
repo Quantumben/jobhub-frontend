@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import { BriefcaseBusiness, Menu, X } from "lucide-react";
 
 function Navbar() {
@@ -20,19 +20,27 @@ function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-8 md:flex">
-          <Link
+          <NavLink
             to="/jobs"
-            className="text-sm font-medium text-gray-600 transition hover:text-blue-600"
+            className={({ isActive }) =>
+              `text-sm font-medium transition ${
+                isActive ? "text-blue-600" : "text-gray-600 hover:text-blue-600"
+              }`
+            }
           >
             Find Jobs
-          </Link>
+          </NavLink>
 
-          <Link
+          <NavLink
             to="/companies"
-            className="text-sm font-medium text-gray-600 transition hover:text-blue-600"
+            className={({ isActive }) =>
+              `text-sm font-medium transition ${
+                isActive ? "text-blue-600" : "text-gray-600 hover:text-blue-600"
+              }`
+            }
           >
             Companies
-          </Link>
+          </NavLink>
         </nav>
 
         {/* Desktop Authentication Buttons */}
