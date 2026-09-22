@@ -1,39 +1,65 @@
-import { Link } from 'react-router'
-import { useFormik } from 'formik'
+import { isAxiosError } from "axios";
+import { useFormik } from "formik";
+import { Link, useNavigate } from "react-router";
 
-import Input from '../../components/common/Input'
-import { registerSchema } from '../../schemas/authSchema'
+import Input from "../../components/common/Input";
 
-interface RegisterFormValues {
-  name: string
-  email: string
-  password: string
-  password_confirmation: string
-}
+import { authService } from "../../features/auth/authService";
+
+import type {
+  LaravelValidationResponse,
+  RegisterData,
+} from "../../features/auth/authTypes";
+
+import { registerSchema } from "../../schemas/authSchema";
 
 function RegisterPage() {
-  const formik = useFormik<RegisterFormValues>({
+  const navigate = useNavigate();
+  const formik = useFormik<RegisterData>({
     initialValues: {
-      name: '',
-      email: '',
-      password: '',
-      password_confirmation: '',
+      name: "",
+      email: "",
+      password: "",
+      password_confirmation: "",
     },
 
     validationSchema: registerSchema,
 
-    onSubmit: (values, { setSubmitting }) => {
-      console.log('Registration form:', values)
+    onSubmit: async (values, { setSubmitting, setFieldError, setStatus }) => {
+      try {
+        setStatus(undefined);
 
-      setSubmitting(false)
+        const response = await authService.register(values);
+
+        localStorage.setItem("auth_token", response.token);
+
+        navigate("/jobs");
+      } catch (error) {
+        if (
+          isAxiosError<LaravelValidationResponse>(error) &&
+          error.response?.status === 422
+        ) {
+          const validationErrors = error.response.data.errors;
+
+          Object.entries(validationErrors).forEach(([field, messages]) => {
+            setFieldError(field, messages[0]);
+          });
+
+          return;
+        }
+
+        setStatus(
+          "Something went wrong while creating your account. Please try again.",
+        );
+      } finally {
+        setSubmitting(false);
+      }
     },
-  })
+  });
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-
       <div className="mx-auto max-w-md">
-
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">
             Create your account
@@ -45,12 +71,12 @@ function RegisterPage() {
         </div>
 
         <div className="mt-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
-
-          <form
-            onSubmit={formik.handleSubmit}
-            noValidate
-            className="space-y-5">
-
+          <form onSubmit={formik.handleSubmit} noValidate className="space-y-5">
+            {formik.status && (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {formik.status}
+              </div>
+            )}
             <Input
               id="name"
               name="name"
@@ -62,7 +88,7 @@ function RegisterPage() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={
-                formik.touched.name
+                formik.touched.name || formik.submitCount > 0
                   ? formik.errors.name
                   : undefined
               }
@@ -79,7 +105,7 @@ function RegisterPage() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={
-                formik.touched.email
+                formik.touched.email || formik.submitCount > 0
                   ? formik.errors.email
                   : undefined
               }
@@ -96,7 +122,7 @@ function RegisterPage() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={
-                formik.touched.password
+                formik.touched.password || formik.submitCount > 0
                   ? formik.errors.password
                   : undefined
               }
@@ -113,7 +139,7 @@ function RegisterPage() {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={
-                formik.touched.password_confirmation
+                formik.touched.password_confirmation || formik.submitCount > 0
                   ? formik.errors.password_confirmation
                   : undefined
               }
@@ -124,16 +150,12 @@ function RegisterPage() {
               disabled={formik.isSubmitting}
               className="w-full rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {formik.isSubmitting
-                ? 'Creating account...'
-                : 'Create Account'}
+              {formik.isSubmitting ? "Creating account..." : "Create Account"}
             </button>
-
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-600">
-            Already have an account?{' '}
-
+            Already have an account?{" "}
             <Link
               to="/login"
               className="font-semibold text-blue-600 hover:text-blue-700"
@@ -141,13 +163,10 @@ function RegisterPage() {
               Login
             </Link>
           </p>
-
         </div>
-
       </div>
-
     </section>
-  )
+  );
 }
 
-export default RegisterPage
+export default RegisterPage;
