@@ -137,4 +137,40 @@ export const jobSchema = Yup.object({
     )
     .optional(),
 
+image: Yup
+  .mixed<File>()
+  .nullable()
+
+  .test(
+    'file-size',
+    'Image must not exceed 2 MB',
+
+    (file) => {
+      if (!file) {
+        return true
+      }
+
+      return (
+        file.size <=
+        2 * 1024 * 1024
+      )
+    },
+  )
+
+  .test(
+    'file-type',
+    'Only JPG, JPEG, PNG and WEBP images are allowed',
+
+    (file) => {
+      if (!file) {
+        return true
+      }
+
+      return [
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+      ].includes(file.type)
+    },
+  ),
 })

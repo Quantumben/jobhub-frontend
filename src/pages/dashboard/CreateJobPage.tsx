@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router";
 
@@ -14,11 +15,39 @@ import type { LaravelValidationResponse } from "../../features/auth/authTypes";
 import { jobSchema } from "../../schemas/jobSchema";
 
 function CreateJobPage() {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
   const isCreating = useAppSelector((state) => state.jobs.isCreating);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0];
+
+    if (!file) {
+      formik.setFieldValue("image", null);
+
+      setImagePreview(null);
+
+      return;
+    }
+
+    formik.setFieldValue("image", file);
+
+    const previewUrl = URL.createObjectURL(file);
+
+    setImagePreview(previewUrl);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   const formik = useFormik<CreateJobData>({
     initialValues: {
@@ -36,6 +65,8 @@ function CreateJobPage() {
       requirements: "",
 
       application_url: "",
+
+      image: null,
     },
 
     validationSchema: jobSchema,
@@ -64,6 +95,7 @@ function CreateJobPage() {
       }
     },
   });
+
 
   const fieldError = (field: keyof CreateJobData) => {
     if (formik.touched[field] || formik.submitCount > 0) {
@@ -114,6 +146,47 @@ function CreateJobPage() {
             onBlur={formik.handleBlur}
             error={fieldError("company")}
           />
+
+          <div>
+            <label
+              htmlFor="image"
+              className="mb-2 block text-sm font-medium text-gray-700"
+            >
+              Company / Job Image
+            </label>
+
+            <input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleImageChange}
+              onBlur={() => formik.setFieldTouched("image", true)}
+              className="block w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:font-medium file:text-blue-600 hover:file:bg-blue-100"
+            />
+
+            {fieldError("image") && (
+              <p className="mt-1.5 text-sm text-red-600">
+                {fieldError("image")}
+              </p>
+            )}
+
+            {imagePreview && (
+              <div className="mt-4">
+                <p className="mb-2 text-sm font-medium text-gray-700">
+                  Preview
+                </p>
+
+                <div className="overflow-hidden rounded-xl border border-gray-200">
+                  <img
+                    src={imagePreview}
+                    alt="Selected job preview"
+                    className="h-56 w-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
 
           <Input
             id="location"

@@ -29,7 +29,10 @@ export interface Job {
   requirements: string
 
   application_url: string | null
+
   image: string | null
+
+  image_public_id: string | null
 
   status: string
 
@@ -42,17 +45,14 @@ export interface CreateJobData {
   title: string
   company: string
   location: string
-
   job_type: JobType
   work_mode: WorkMode
-
   salary_min: string
   salary_max: string
-
   description: string
   requirements: string
-
   application_url: string
+  image: File | null
 }
 
 
