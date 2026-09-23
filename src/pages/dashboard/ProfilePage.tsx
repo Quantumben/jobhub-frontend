@@ -20,6 +20,7 @@ import type {
 } from "../../features/auth/authTypes";
 
 import { profileSchema } from "../../schemas/authSchema";
+import ChangePasswordForm from "../../components/profile/ChangePasswordForm";
 
 function ProfilePage() {
   /*
@@ -301,6 +302,12 @@ function ProfilePage() {
             </div>
           </form>
         </div>
+      </div>
+
+      {/* Security */}
+
+      <div className="mt-8">
+        <ChangePasswordForm />
       </div>
     </div>
   );

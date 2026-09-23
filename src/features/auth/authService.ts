@@ -3,6 +3,8 @@ import api from "../../api/axios";
 import type {
   AuthResponse,
   LoginData,
+  ChangePasswordData,
+  ChangePasswordResponse,
   RegisterData,
   UpdateProfileData,
   UpdateProfileResponse,
@@ -39,10 +41,22 @@ const updateProfile = async (
   return response.data;
 };
 
+const changePassword = async (
+  data: ChangePasswordData,
+): Promise<ChangePasswordResponse> => {
+  const response = await api.post<ChangePasswordResponse>(
+    "/profile/password",
+    data,
+  );
+
+  return response.data;
+};
+
 export const authService = {
   register,
   login,
   logout,
   getCurrentUser,
   updateProfile,
+  changePassword
 };

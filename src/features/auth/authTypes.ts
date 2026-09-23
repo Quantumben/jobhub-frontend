@@ -38,3 +38,12 @@ export interface UpdateProfileResponse {
   message: string;
   user: User;
 }
+export interface ChangePasswordData {
+  current_password: string;
+  password: string;
+  password_confirmation: string;
+}
+
+export interface ChangePasswordResponse {
+  message: string;
+}
