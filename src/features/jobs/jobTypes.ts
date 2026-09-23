@@ -60,3 +60,7 @@ export interface CreateJobResponse {
   message: string
   job: Job
 }
+
+export interface MyJobsResponse {
+  jobs: Job[]
+}

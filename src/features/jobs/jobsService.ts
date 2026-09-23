@@ -1,9 +1,7 @@
 import api from '../../api/axios'
 
-import type {
-  CreateJobData,
-  CreateJobResponse,
-} from './jobTypes'
+import type { CreateJobData, CreateJobResponse, MyJobsResponse,} from './jobTypes'
+
 
 
 const createJob = async (data: CreateJobData,): Promise<CreateJobResponse> =>
@@ -80,7 +78,14 @@ const createJob = async (data: CreateJobData,): Promise<CreateJobResponse> =>
   return response.data
 }
 
+const getMyJobs = async (): Promise<MyJobsResponse> =>
+{
+    const response = await api.get<MyJobsResponse>( '/my-jobs',)
+
+    return response.data
+}
 
 export const jobsService = {
   createJob,
+  getMyJobs,
 }

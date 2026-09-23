@@ -18,14 +18,16 @@ import type {
 
 
 interface JobsState {
-  items: Job[]
+  myJobs: Job[]
+  isLoadingMyJobs: boolean
   isCreating: boolean
   error: string | null
 }
 
 
 const initialState: JobsState = {
-  items: [],
+  myJobs: [],
+  isLoadingMyJobs: false,
   isCreating: false,
   error: null,
 }
@@ -61,6 +63,35 @@ export const createJob =
   )
 
 
+  export const fetchMyJobs = createAsyncThunk<Job[], void,{rejectValue: string}>
+  (
+    'jobs/fetchMyJobs',
+
+    async (_,{rejectWithValue,},) =>
+    {
+      try {
+
+        const response = await jobsService.getMyJobs()
+
+        return response.jobs
+
+      } catch (error) {
+
+        if (isAxiosError(error)) {
+
+          return rejectWithValue(
+            error.response?.data?.message ??
+            'Unable to load your jobs.',
+          )
+        }
+
+        return rejectWithValue(
+          'Unable to load your jobs.',
+        )
+      }
+    },
+  )
+
 const jobsSlice = createSlice({
   name: 'jobs',
 
@@ -70,6 +101,7 @@ const jobsSlice = createSlice({
 
   extraReducers: (builder) => {
 
+    // Creating Job
     builder
 
       .addCase(
@@ -88,7 +120,7 @@ const jobsSlice = createSlice({
         (state, action) => {
           state.isCreating = false
 
-          state.items.unshift(
+          state.myJobs.unshift(
             action.payload,
           )
         },
@@ -106,7 +138,43 @@ const jobsSlice = createSlice({
             action.error.message ??
             'Unable to create job.'
         },
-      )
+    )
+
+    // Fetching Jobs
+    builder
+
+        .addCase(
+            fetchMyJobs.pending,
+
+            (state) => {
+            state.isLoadingMyJobs = true
+
+            state.error = null
+            },
+        )
+
+        .addCase(
+            fetchMyJobs.fulfilled,
+
+            (state, action) => {
+            state.isLoadingMyJobs = false
+
+            state.myJobs =
+                action.payload
+            },
+        )
+
+        .addCase(
+            fetchMyJobs.rejected,
+
+            (state, action) => {
+            state.isLoadingMyJobs = false
+
+            state.error =
+                action.payload ??
+                'Unable to load your jobs.'
+            },
+        )
   },
 })
 
