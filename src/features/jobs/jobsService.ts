@@ -5,6 +5,8 @@ import type {
   CreateJobResponse,
   DeleteJobResponse,
   MyJobsResponse,
+  PublicJobsFilters,
+  PublicJobsResponse,
   SingleJobResponse,
   UpdateJobResponse,
 } from "./jobTypes";
@@ -107,10 +109,31 @@ const deleteJob = async (id: number): Promise<DeleteJobResponse> => {
   return response.data;
 };
 
+const getPublicJobs = async (
+  filters: PublicJobsFilters,
+): Promise<PublicJobsResponse> => {
+  const response = await api.get<PublicJobsResponse>("/jobs", {
+    params: {
+      search: filters.search || undefined,
+
+      location: filters.location || undefined,
+
+      job_type: filters.job_type || undefined,
+
+      work_mode: filters.work_mode || undefined,
+
+      page: filters.page,
+    },
+  });
+
+  return response.data;
+};
+
 export const jobsService = {
   createJob,
   getMyJobs,
   getMyJob,
   updateJob,
   deleteJob,
+  getPublicJobs,
 };

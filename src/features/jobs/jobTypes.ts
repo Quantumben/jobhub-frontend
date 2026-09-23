@@ -71,3 +71,23 @@ export interface UpdateJobArgs {
 export interface DeleteJobResponse {
   message: string;
 }
+
+export interface PaginationMeta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
+export interface PublicJobsResponse {
+  jobs: Job[];
+  pagination: PaginationMeta;
+}
+
+export interface PublicJobsFilters {
+  search: string;
+  location: string;
+  job_type: string;
+  work_mode: string;
+  page: number;
+}

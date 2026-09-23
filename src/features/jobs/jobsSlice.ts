@@ -4,19 +4,30 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import { jobsService } from "./jobsService";
 
-import type { CreateJobData, Job } from "./jobTypes";
+import type {
+  CreateJobData,
+  Job,
+  PaginationMeta,
+  PublicJobsFilters,
+  PublicJobsResponse,
+  //   UpdateJobArgs,
+} from "./jobTypes";
 
 import type { LaravelValidationResponse } from "../auth/authTypes";
 
 interface JobsState {
   myJobs: Job[];
+  publicJobs: Job[];
   selectedJob: Job | null;
+  publicPagination: PaginationMeta;
   isLoadingMyJobs: boolean;
+  isLoadingPublicJobs: boolean;
   isLoadingJob: boolean;
   isCreating: boolean;
   isUpdating: boolean;
   isDeleting: boolean;
   error: string | null;
+  publicJobsError: string | null;
 }
 
 interface UpdateJobArgs {
@@ -26,13 +37,22 @@ interface UpdateJobArgs {
 
 const initialState: JobsState = {
   myJobs: [],
+  publicJobs: [],
   selectedJob: null,
+  publicPagination: {
+    current_page: 1,
+    last_page: 1,
+    per_page: 9,
+    total: 0,
+  },
   isLoadingMyJobs: false,
+  isLoadingPublicJobs: false,
   isLoadingJob: false,
   isCreating: false,
   isUpdating: false,
   isDeleting: false,
   error: null,
+  publicJobsError: null,
 };
 
 export const createJob = createAsyncThunk<
@@ -167,6 +187,32 @@ export const deleteJob = createAsyncThunk<
       }
 
       return rejectWithValue("Unable to delete job.");
+    }
+  },
+);
+
+//FETCH PUBLIC JOBS
+
+export const fetchPublicJobs = createAsyncThunk<
+  PublicJobsResponse,
+  PublicJobsFilters,
+  {
+    rejectValue: string;
+  }
+>(
+  "jobs/fetchPublicJobs",
+
+  async (filters, { rejectWithValue }) => {
+    try {
+      return await jobsService.getPublicJobs(filters);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data?.message ?? "Unable to load jobs.",
+        );
+      }
+
+      return rejectWithValue("Unable to load jobs.");
     }
   },
 );
@@ -364,6 +410,41 @@ const jobsSlice = createSlice({
 
           state.error =
             action.payload ?? action.error.message ?? "Unable to delete job.";
+        },
+      );
+
+    //   fetch Public jobs reducer
+    builder
+
+      .addCase(
+        fetchPublicJobs.pending,
+
+        (state) => {
+          state.isLoadingPublicJobs = true;
+
+          state.publicJobsError = null;
+        },
+      )
+
+      .addCase(
+        fetchPublicJobs.fulfilled,
+
+        (state, action) => {
+          state.isLoadingPublicJobs = false;
+
+          state.publicJobs = action.payload.jobs;
+
+          state.publicPagination = action.payload.pagination;
+        },
+      )
+
+      .addCase(
+        fetchPublicJobs.rejected,
+
+        (state, action) => {
+          state.isLoadingPublicJobs = false;
+
+          state.publicJobsError = action.payload ?? "Unable to load jobs.";
         },
       );
   },
