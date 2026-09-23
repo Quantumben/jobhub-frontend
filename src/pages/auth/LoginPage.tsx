@@ -1,6 +1,6 @@
 import { isAxiosError } from "axios";
 import { useFormik } from "formik";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 
 import Input from "../../components/common/Input";
 
@@ -18,9 +18,17 @@ import type {
 import { loginSchema } from "../../schemas/authSchema";
 
 function LoginPage() {
+  const location = useLocation();
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
+
+  const from =
+    (
+      location.state as {
+        from?: string;
+      } | null
+    )?.from ?? "/dashboard";
 
   const formik = useFormik<LoginData>({
     initialValues: {
@@ -40,7 +48,9 @@ function LoginPage() {
 
         dispatch(setCredentials(response.user));
 
-        navigate("/jobs");
+        navigate(from, {
+          replace: true,
+        });
       } catch (error) {
         if (
           isAxiosError<LaravelValidationResponse>(error) &&

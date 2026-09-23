@@ -38,7 +38,7 @@ function RegisterPage() {
 
         dispatch(setCredentials(response.user))
 
-        navigate("/jobs");
+        navigate("/dashboard");
       } catch (error) {
         if (
           isAxiosError<LaravelValidationResponse>(error) &&
