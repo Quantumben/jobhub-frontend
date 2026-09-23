@@ -15,6 +15,7 @@ interface JobsState {
   isLoadingJob: boolean;
   isCreating: boolean;
   isUpdating: boolean;
+  isDeleting: boolean;
   error: string | null;
 }
 
@@ -30,6 +31,7 @@ const initialState: JobsState = {
   isLoadingJob: false,
   isCreating: false,
   isUpdating: false,
+  isDeleting: false,
   error: null,
 };
 
@@ -128,6 +130,43 @@ export const updateJob = createAsyncThunk<
       }
 
       throw error;
+    }
+  },
+);
+
+export const deleteJob = createAsyncThunk<
+  number,
+  number,
+  {
+    rejectValue: string;
+  }
+>(
+  "jobs/deleteJob",
+
+  async (id, { rejectWithValue }) => {
+    try {
+      await jobsService.deleteJob(id);
+
+      /*
+        |--------------------------------------------------------------------------
+        | Important
+        |--------------------------------------------------------------------------
+        |
+        | Laravel doesn't need to return the deleted Job.
+        |
+        | We already know which ID we deleted.
+        |
+        */
+
+      return id;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data?.message ?? "Unable to delete job.",
+        );
+      }
+
+      return rejectWithValue("Unable to delete job.");
     }
   },
 );
@@ -285,6 +324,46 @@ const jobsSlice = createSlice({
             action.payload?.message ??
             action.error.message ??
             "Unable to update job.";
+        },
+      );
+
+    //delete Job Reducer
+    builder
+
+      .addCase(
+        deleteJob.pending,
+
+        (state) => {
+          state.isDeleting = true;
+
+          state.error = null;
+        },
+      )
+
+      .addCase(
+        deleteJob.fulfilled,
+
+        (state, action) => {
+          state.isDeleting = false;
+
+          state.myJobs = state.myJobs.filter(
+            (job) => job.id !== action.payload,
+          );
+
+          if (state.selectedJob?.id === action.payload) {
+            state.selectedJob = null;
+          }
+        },
+      )
+
+      .addCase(
+        deleteJob.rejected,
+
+        (state, action) => {
+          state.isDeleting = false;
+
+          state.error =
+            action.payload ?? action.error.message ?? "Unable to delete job.";
         },
       );
   },

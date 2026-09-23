@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { AlertCircle, BriefcaseBusiness, PlusCircle } from "lucide-react";
 
@@ -8,14 +8,46 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 import MyJobCard from "../../components/jobs/MyJobCard";
 
-import { fetchMyJobs } from "../../features/jobs/jobsSlice";
+import { fetchMyJobs, deleteJob } from "../../features/jobs/jobsSlice";
+
+import DeleteJobModal from "../../components/jobs/DeleteJobModal";
+
+import type { Job } from "../../features/jobs/jobTypes";
 
 function MyJobsPage() {
+  const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
+
   const dispatch = useAppDispatch();
 
-  const { myJobs, isLoadingMyJobs, error } = useAppSelector(
+  const { myJobs, isLoadingMyJobs, isDeleting, error } = useAppSelector(
     (state) => state.jobs,
   );
+
+  const handleDeleteClick = (job: Job) => {
+    setJobToDelete(job);
+  };
+
+  const handleDeleteCancel = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setJobToDelete(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!jobToDelete) {
+      return;
+    }
+
+    try {
+      await dispatch(deleteJob(jobToDelete.id)).unwrap();
+
+      setJobToDelete(null);
+    } catch (error) {
+      console.error("Unable to delete job:", error);
+    }
+  };
 
   useEffect(() => {
     dispatch(fetchMyJobs());
@@ -106,9 +138,18 @@ function MyJobsPage() {
       {!isLoadingMyJobs && !error && myJobs.length > 0 && (
         <div className="mt-8 space-y-5">
           {myJobs.map((job) => (
-            <MyJobCard key={job.id} job={job} />
+            <MyJobCard key={job.id} job={job} onDelete={handleDeleteClick} />
           ))}
         </div>
+      )}
+
+      {jobToDelete && (
+        <DeleteJobModal
+          jobTitle={jobToDelete.title}
+          isDeleting={isDeleting}
+          onCancel={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+        />
       )}
     </div>
   );

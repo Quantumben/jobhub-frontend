@@ -1,4 +1,11 @@
-import { BriefcaseBusiness, Eye, Laptop, MapPin, Pencil } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Eye,
+  Laptop,
+  MapPin,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 
 import { Link } from "react-router";
 
@@ -6,9 +13,10 @@ import type { Job } from "../../features/jobs/jobTypes";
 
 interface MyJobCardProps {
   job: Job;
+  onDelete: (job: Job) => void;
 }
 
-function MyJobCard({ job }: MyJobCardProps) {
+function MyJobCard({ job, onDelete }: MyJobCardProps) {
   const jobType = job.job_type.replace("_", " ");
 
   const workMode = job.work_mode.replace("_", " ");
@@ -69,6 +77,14 @@ function MyJobCard({ job }: MyJobCardProps) {
               <Pencil className="h-4 w-4" />
               Edit
             </Link>
+            <button
+              type="button"
+              onClick={() => onDelete(job)}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100"
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </button>
           </div>
 
           <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm text-gray-500">
