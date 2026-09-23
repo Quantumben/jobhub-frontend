@@ -20,3 +20,13 @@ export const registerSchema = Yup.object({
     .required('Please confirm your password')
     .oneOf([Yup.ref('password')], 'Passwords must match'),
 })
+
+export const loginSchema = Yup.object({
+  email: Yup.string()
+    .trim()
+    .email('Enter a valid email address')
+    .required('Email is required'),
+
+  password: Yup.string()
+    .required('Password is required'),
+})

@@ -1,7 +1,12 @@
-import AppRoutes from './routes/AppRoutes'
+import AuthInitializer from "./components/auth/AuthInitializer";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return <AppRoutes />
+  return (
+    <AuthInitializer>
+      <AppRoutes />
+    </AuthInitializer>
+  );
 }
 
-export default App
+export default App;

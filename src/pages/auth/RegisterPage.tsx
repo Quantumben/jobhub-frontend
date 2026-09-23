@@ -1,3 +1,5 @@
+import { useAppDispatch } from '../../app/hooks'
+import { setCredentials,} from '../../features/auth/authSlice'
 import { isAxiosError } from "axios";
 import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router";
@@ -14,6 +16,7 @@ import type {
 import { registerSchema } from "../../schemas/authSchema";
 
 function RegisterPage() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const formik = useFormik<RegisterData>({
     initialValues: {
@@ -32,6 +35,8 @@ function RegisterPage() {
         const response = await authService.register(values);
 
         localStorage.setItem("auth_token", response.token);
+
+        dispatch(setCredentials(response.user))
 
         navigate("/jobs");
       } catch (error) {
