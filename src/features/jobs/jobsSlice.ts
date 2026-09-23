@@ -17,17 +17,34 @@ import type { LaravelValidationResponse } from "../auth/authTypes";
 
 interface JobsState {
   myJobs: Job[];
+
   publicJobs: Job[];
+
   selectedJob: Job | null;
+
+  publicSelectedJob: Job | null;
+
   publicPagination: PaginationMeta;
+
   isLoadingMyJobs: boolean;
+
   isLoadingPublicJobs: boolean;
+
   isLoadingJob: boolean;
+
+  isLoadingPublicJob: boolean;
+
   isCreating: boolean;
+
   isUpdating: boolean;
+
   isDeleting: boolean;
+
   error: string | null;
+
   publicJobsError: string | null;
+
+  publicJobError: string | null;
 }
 
 interface UpdateJobArgs {
@@ -37,22 +54,39 @@ interface UpdateJobArgs {
 
 const initialState: JobsState = {
   myJobs: [],
+
   publicJobs: [],
+
   selectedJob: null,
+
+  publicSelectedJob: null,
+
   publicPagination: {
     current_page: 1,
     last_page: 1,
     per_page: 9,
     total: 0,
   },
+
   isLoadingMyJobs: false,
+
   isLoadingPublicJobs: false,
+
   isLoadingJob: false,
+
+  isLoadingPublicJob: false,
+
   isCreating: false,
+
   isUpdating: false,
+
   isDeleting: false,
+
   error: null,
+
   publicJobsError: null,
+
+  publicJobError: null,
 };
 
 export const createJob = createAsyncThunk<
@@ -213,6 +247,38 @@ export const fetchPublicJobs = createAsyncThunk<
       }
 
       return rejectWithValue("Unable to load jobs.");
+    }
+  },
+);
+
+// fetchPublicJob
+
+export const fetchPublicJob = createAsyncThunk<
+  Job,
+  number,
+  {
+    rejectValue: string;
+  }
+>(
+  "jobs/fetchPublicJob",
+
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await jobsService.getPublicJob(id);
+
+      return response.job;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          return rejectWithValue("Job not found.");
+        }
+
+        return rejectWithValue(
+          error.response?.data?.message ?? "Unable to load this job.",
+        );
+      }
+
+      return rejectWithValue("Unable to load this job.");
     }
   },
 );
@@ -445,6 +511,41 @@ const jobsSlice = createSlice({
           state.isLoadingPublicJobs = false;
 
           state.publicJobsError = action.payload ?? "Unable to load jobs.";
+        },
+      );
+
+    //   fetchPublic Reducer
+    builder
+
+      .addCase(
+        fetchPublicJob.pending,
+
+        (state) => {
+          state.isLoadingPublicJob = true;
+
+          state.publicJobError = null;
+
+          state.publicSelectedJob = null;
+        },
+      )
+
+      .addCase(
+        fetchPublicJob.fulfilled,
+
+        (state, action) => {
+          state.isLoadingPublicJob = false;
+
+          state.publicSelectedJob = action.payload;
+        },
+      )
+
+      .addCase(
+        fetchPublicJob.rejected,
+
+        (state, action) => {
+          state.isLoadingPublicJob = false;
+
+          state.publicJobError = action.payload ?? "Unable to load this job.";
         },
       );
   },

@@ -129,6 +129,12 @@ const getPublicJobs = async (
   return response.data;
 };
 
+const getPublicJob = async (id: number): Promise<SingleJobResponse> => {
+  const response = await api.get<SingleJobResponse>(`/jobs/${id}`);
+
+  return response.data;
+};
+
 export const jobsService = {
   createJob,
   getMyJobs,
@@ -136,4 +142,5 @@ export const jobsService = {
   updateJob,
   deleteJob,
   getPublicJobs,
+  getPublicJob,
 };
