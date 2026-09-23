@@ -64,3 +64,19 @@ export interface CreateJobResponse {
 export interface MyJobsResponse {
   jobs: Job[]
 }
+
+export interface SingleJobResponse {
+  job: Job
+}
+
+
+export interface UpdateJobResponse {
+  message: string
+  job: Job
+}
+
+
+export interface UpdateJobArgs {
+  id: number
+  data: CreateJobData
+}

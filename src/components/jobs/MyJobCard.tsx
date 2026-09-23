@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, Eye, Laptop, MapPin } from "lucide-react";
+import { BriefcaseBusiness, Eye, Laptop, MapPin, Pencil } from "lucide-react";
 
 import { Link } from "react-router";
 
@@ -60,6 +60,14 @@ function MyJobCard({ job }: MyJobCardProps) {
             >
               <Eye className="h-4 w-4" />
               View
+            </Link>
+
+            <Link
+              to={`/dashboard/jobs/${job.id}/edit`}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600 transition hover:bg-blue-100"
+            >
+              <Pencil className="h-4 w-4" />
+              Edit
             </Link>
           </div>
 
