@@ -1,5 +1,5 @@
-import { useAppDispatch } from '../../app/hooks'
-import { setCredentials,} from '../../features/auth/authSlice'
+import { useAppDispatch } from "../../app/hooks";
+import { setCredentials } from "../../features/auth/authSlice";
 import { isAxiosError } from "axios";
 import { useFormik } from "formik";
 import { Link, useNavigate } from "react-router";
@@ -14,6 +14,7 @@ import type {
 } from "../../features/auth/authTypes";
 
 import { registerSchema } from "../../schemas/authSchema";
+import { addToast } from "../../features/toasts/toastSlice";
 
 function RegisterPage() {
   const dispatch = useAppDispatch();
@@ -36,7 +37,14 @@ function RegisterPage() {
 
         localStorage.setItem("auth_token", response.token);
 
-        dispatch(setCredentials(response.user))
+        dispatch(setCredentials(response.user));
+
+        dispatch(
+          addToast({
+            type: "success",
+            message: "Account created successfully.",
+          }),
+        );
 
         navigate("/dashboard");
       } catch (error) {

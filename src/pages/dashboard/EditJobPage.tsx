@@ -15,6 +15,7 @@ import type { CreateJobData } from "../../features/jobs/jobTypes";
 import type { LaravelValidationResponse } from "../../features/auth/authTypes";
 
 import { jobSchema } from "../../schemas/jobSchema";
+import { addToast } from "../../features/toasts/toastSlice";
 
 function EditJobPage() {
   /*
@@ -191,6 +192,13 @@ function EditJobPage() {
             data: values,
           }),
         ).unwrap();
+
+        dispatch(
+          addToast({
+            type: "success",
+            message: "Job updated successfully.",
+          }),
+        );
 
         /*
           |--------------------------------------------------------------------------

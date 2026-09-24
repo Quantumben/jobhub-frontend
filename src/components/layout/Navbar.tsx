@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { clearAuth } from "../../features/auth/authSlice";
 
 import { authService } from "../../features/auth/authService";
+import { addToast } from "../../features/toasts/toastSlice";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,6 +26,13 @@ function Navbar() {
       localStorage.removeItem("auth_token");
 
       dispatch(clearAuth());
+
+      dispatch(
+        addToast({
+          type: "success",
+          message: "You have been logged out.",
+        }),
+      );
 
       setIsMenuOpen(false);
 

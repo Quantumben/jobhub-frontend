@@ -13,6 +13,7 @@ import type { CreateJobData } from "../../features/jobs/jobTypes";
 import type { LaravelValidationResponse } from "../../features/auth/authTypes";
 
 import { jobSchema } from "../../schemas/jobSchema";
+import { addToast } from "../../features/toasts/toastSlice";
 
 function CreateJobPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -76,6 +77,12 @@ function CreateJobPage() {
         setStatus(undefined);
 
         await dispatch(createJob(values)).unwrap();
+        dispatch(
+          addToast({
+            type: "success",
+            message: "Job created successfully.",
+          }),
+        );
 
         navigate("/dashboard/jobs");
       } catch (error) {
@@ -95,7 +102,6 @@ function CreateJobPage() {
       }
     },
   });
-
 
   const fieldError = (field: keyof CreateJobData) => {
     if (formik.touched[field] || formik.submitCount > 0) {

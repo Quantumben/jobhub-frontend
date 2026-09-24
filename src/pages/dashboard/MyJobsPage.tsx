@@ -13,6 +13,7 @@ import { fetchMyJobs, deleteJob } from "../../features/jobs/jobsSlice";
 import DeleteJobModal from "../../components/jobs/DeleteJobModal";
 
 import type { Job } from "../../features/jobs/jobTypes";
+import { addToast } from "../../features/toasts/toastSlice";
 
 function MyJobsPage() {
   const [jobToDelete, setJobToDelete] = useState<Job | null>(null);
@@ -44,8 +45,20 @@ function MyJobsPage() {
       await dispatch(deleteJob(jobToDelete.id)).unwrap();
 
       setJobToDelete(null);
-    } catch (error) {
-      console.error("Unable to delete job:", error);
+
+      dispatch(
+        addToast({
+          type: "success",
+          message: "Job deleted successfully.",
+        }),
+      );
+    } catch {
+      dispatch(
+        addToast({
+          type: "error",
+          message: "Unable to delete the job.",
+        }),
+      );
     }
   };
 

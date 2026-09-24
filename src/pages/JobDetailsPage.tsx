@@ -15,6 +15,7 @@ import { Link, useParams } from "react-router";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 import { fetchPublicJob } from "../features/jobs/jobsSlice";
+import { addToast } from "../features/toasts/toastSlice";
 
 function JobDetailsPage() {
   /*
@@ -105,7 +106,13 @@ function JobDetailsPage() {
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(window.location.href);
 
-        setShareMessage("Job link copied.");
+        dispatch(
+          addToast({
+            type: "success",
+            message: "Job link copied.",
+          }),
+        );
+        // setShareMessage("Job link copied.");
 
         return;
       }

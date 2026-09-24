@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useState } from "react";
 
 import { CheckCircle2, UserRound } from "lucide-react";
 
@@ -21,6 +21,7 @@ import type {
 
 import { profileSchema } from "../../schemas/authSchema";
 import ChangePasswordForm from "../../components/profile/ChangePasswordForm";
+import { addToast } from "../../features/toasts/toastSlice";
 
 function ProfilePage() {
   /*
@@ -39,7 +40,7 @@ function ProfilePage() {
   |--------------------------------------------------------------------------
   */
 
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  //   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   /*
   |--------------------------------------------------------------------------
@@ -113,6 +114,13 @@ function ProfilePage() {
           */
 
         dispatch(setCredentials(response.user));
+
+        dispatch(
+          addToast({
+            type: "success",
+            message: response.message,
+          }),
+        );
 
         /*
           |--------------------------------------------------------------------------

@@ -16,6 +16,7 @@ import type {
 } from "../../features/auth/authTypes";
 
 import { loginSchema } from "../../schemas/authSchema";
+import { addToast } from "../../features/toasts/toastSlice";
 
 function LoginPage() {
   const location = useLocation();
@@ -48,6 +49,12 @@ function LoginPage() {
 
         dispatch(setCredentials(response.user));
 
+        dispatch(
+          addToast({
+            type: "success",
+            message: `Welcome back, ${response.user.name}.`,
+          }),
+        );
         navigate(from, {
           replace: true,
         });

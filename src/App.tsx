@@ -1,11 +1,15 @@
 import AuthInitializer from "./components/auth/AuthInitializer";
 import AppRoutes from "./routes/AppRoutes";
+import ToastContainer from "./components/common/ToastContainer";
 
 function App() {
   return (
-    <AuthInitializer>
-      <AppRoutes />
-    </AuthInitializer>
+    <>
+      <AuthInitializer>
+        <AppRoutes />
+      </AuthInitializer>
+      <ToastContainer />
+    </>
   );
 }
 

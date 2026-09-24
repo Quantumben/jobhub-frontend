@@ -17,7 +17,12 @@ import type {
 
 import { changePasswordSchema } from "../../schemas/authSchema";
 
+import { useAppDispatch } from "../../app/hooks";
+import { addToast } from "../../features/toasts/toastSlice";
+
 function ChangePasswordForm() {
+  const dispatch = useAppDispatch();
+
   /*
   |--------------------------------------------------------------------------
   | Success Message
@@ -78,6 +83,19 @@ function ChangePasswordForm() {
 
         resetForm();
 
+        dispatch(
+          addToast({
+            type: "success",
+            message: response.message,
+          }),
+        );
+
+        dispatch(
+          addToast({
+            type: "error",
+            message: "Unable to change your password.",
+          }),
+        );
         /*
           |--------------------------------------------------------------------------
           | Success
