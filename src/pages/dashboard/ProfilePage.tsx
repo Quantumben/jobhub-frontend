@@ -1,4 +1,4 @@
-// import { useState } from "react";
+import { useState } from "react";
 
 import { CheckCircle2, UserRound } from "lucide-react";
 
@@ -40,7 +40,7 @@ function ProfilePage() {
   |--------------------------------------------------------------------------
   */
 
-  //   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   /*
   |--------------------------------------------------------------------------
@@ -97,7 +97,7 @@ function ProfilePage() {
 
         setStatus(undefined);
 
-        setSuccessMessage(null);
+        // setSuccessMessage(null);
 
         /*
           |--------------------------------------------------------------------------
