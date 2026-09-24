@@ -18,6 +18,7 @@ import MyJobsPage from "../pages/dashboard/MyJobsPage";
 import CreateJobPage from "../pages/dashboard/CreateJobPage";
 import ProfilePage from "../pages/dashboard/ProfilePage";
 import EditJobPage from "../pages/dashboard/EditJobPage";
+import CompanyDetailsPage from "../pages/CompanyDetailsPage";
 
 function AppRoutes() {
   return (
@@ -31,6 +32,8 @@ function AppRoutes() {
 
         <Route path="companies" element={<CompaniesPage />} />
 
+        <Route path="companies/:id" element={<CompanyDetailsPage />} />
+        
         <Route path="login" element={<LoginPage />} />
 
         <Route path="register" element={<RegisterPage />} />
