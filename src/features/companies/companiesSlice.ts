@@ -1,6 +1,10 @@
 import { isAxiosError } from "axios";
 
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 
 import { companiesService } from "./companiesService";
 
@@ -14,21 +18,29 @@ import type {
 interface CompaniesState {
   companies: Company[];
 
+  myCompanies: Company[];
+
   selectedCompany: Company | null;
 
   pagination: CompanyPagination;
 
   isLoadingCompanies: boolean;
 
+  isLoadingMyCompanies: boolean;
+
   isLoadingCompany: boolean;
 
   companiesError: string | null;
+
+  myCompaniesError: string | null;
 
   companyError: string | null;
 }
 
 const initialState: CompaniesState = {
   companies: [],
+
+  myCompanies: [],
 
   selectedCompany: null,
 
@@ -41,9 +53,13 @@ const initialState: CompaniesState = {
 
   isLoadingCompanies: false,
 
+  isLoadingMyCompanies: false,
+
   isLoadingCompany: false,
 
   companiesError: null,
+
+  myCompaniesError: null,
 
   companyError: null,
 };
@@ -114,12 +130,58 @@ export const fetchCompany = createAsyncThunk<
   },
 );
 
+export const fetchMyCompanies = createAsyncThunk<
+  Company[],
+  void,
+  {
+    rejectValue: string;
+  }
+>(
+  "companies/fetchMyCompanies",
+
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await companiesService.getMyCompanies();
+
+      return response.companies;
+    } catch (error) {
+      if (isAxiosError(error)) {
+        return rejectWithValue(
+          error.response?.data?.message ?? "Unable to load your companies.",
+        );
+      }
+
+      return rejectWithValue("Unable to load your companies.");
+    }
+  },
+);
+
 const companiesSlice = createSlice({
   name: "companies",
 
   initialState,
 
-  reducers: {},
+  reducers: {
+    addMyCompany: (state, action: PayloadAction<Company>) => {
+      state.myCompanies.unshift(action.payload);
+    },
+
+    replaceMyCompany: (state, action: PayloadAction<Company>) => {
+      const index = state.myCompanies.findIndex(
+        (company) => company.id === action.payload.id,
+      );
+
+      if (index !== -1) {
+        state.myCompanies[index] = action.payload;
+      }
+    },
+
+    removeMyCompany: (state, action: PayloadAction<number>) => {
+      state.myCompanies = state.myCompanies.filter(
+        (company) => company.id !== action.payload,
+      );
+    },
+  },
 
   extraReducers: (builder) => {
     builder
@@ -198,8 +260,48 @@ const companiesSlice = createSlice({
 
           state.companyError = action.payload ?? "Unable to load company.";
         },
+      )
+
+      /*
+          |--------------------------------------------------------------------------
+          | My Companies
+          |--------------------------------------------------------------------------
+          */
+
+      .addCase(
+        fetchMyCompanies.pending,
+
+        (state) => {
+          state.isLoadingMyCompanies = true;
+
+          state.myCompaniesError = null;
+        },
+      )
+
+      .addCase(
+        fetchMyCompanies.fulfilled,
+
+        (state, action) => {
+          state.isLoadingMyCompanies = false;
+
+          state.myCompanies = action.payload;
+        },
+      )
+
+      .addCase(
+        fetchMyCompanies.rejected,
+
+        (state, action) => {
+          state.isLoadingMyCompanies = false;
+
+          state.myCompaniesError =
+            action.payload ?? "Unable to load your companies.";
+        },
       );
   },
 });
+
+export const { addMyCompany, replaceMyCompany, removeMyCompany } =
+  companiesSlice.actions;
 
 export default companiesSlice.reducer;

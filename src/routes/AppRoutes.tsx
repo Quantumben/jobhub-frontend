@@ -19,6 +19,8 @@ import CreateJobPage from "../pages/dashboard/CreateJobPage";
 import ProfilePage from "../pages/dashboard/ProfilePage";
 import EditJobPage from "../pages/dashboard/EditJobPage";
 import CompanyDetailsPage from "../pages/CompanyDetailsPage";
+import MyCompaniesPage from "../pages/dashboard/MyCompaniesPage";
+import CreateCompanyPage from "../pages/dashboard/CreateCompanyPage";
 
 function AppRoutes() {
   return (
@@ -33,7 +35,7 @@ function AppRoutes() {
         <Route path="companies" element={<CompaniesPage />} />
 
         <Route path="companies/:id" element={<CompanyDetailsPage />} />
-        
+
         <Route path="login" element={<LoginPage />} />
 
         <Route path="register" element={<RegisterPage />} />
@@ -57,6 +59,10 @@ function AppRoutes() {
           <Route path="jobs/:id/edit" element={<EditJobPage />} />
 
           <Route path="profile" element={<ProfilePage />} />
+
+          <Route path="companies" element={<MyCompaniesPage />} />
+
+          <Route path="companies/create" element={<CreateCompanyPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

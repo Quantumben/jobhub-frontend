@@ -19,7 +19,9 @@ export interface Company {
 
   status: string;
 
-  active_jobs_count: number;
+  active_jobs_count?: number;
+
+  jobs_count?: number;
 
   jobs?: Job[];
 
@@ -54,4 +56,25 @@ export interface CompaniesFilters {
   location: string;
 
   page: number;
+}
+export interface CompanyFormData {
+  name: string;
+
+  website: string;
+
+  location: string;
+
+  description: string;
+
+  logo: File | null;
+}
+
+export interface MyCompaniesResponse {
+  companies: Company[];
+}
+
+export interface CompanyMutationResponse {
+  message: string;
+
+  company: Company;
 }

@@ -3,11 +3,19 @@ import {
   CircleUserRound,
   LayoutDashboard,
   PlusCircle,
+  Building2,
 } from "lucide-react";
 
 import { NavLink, Outlet } from "react-router";
 
 function DashboardLayout() {
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+      isActive
+        ? "bg-blue-50 text-blue-600"
+        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+    }`;
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
@@ -20,13 +28,7 @@ function DashboardLayout() {
             <NavLink
               to="/dashboard"
               end
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                  isActive
-                    ? "bg-blue-50 text-blue-600"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                }`
-              }
+              className={navLinkClass}
             >
               <LayoutDashboard className="h-5 w-5" />
               Overview
@@ -34,13 +36,7 @@ function DashboardLayout() {
 
             <NavLink
               to="/dashboard/jobs"
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                  isActive
-                    ? "bg-blue-50 text-blue-600"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                }`
-              }
+              className={navLinkClass}
             >
               <BriefcaseBusiness className="h-5 w-5" />
               My Jobs
@@ -48,13 +44,7 @@ function DashboardLayout() {
 
             <NavLink
               to="/dashboard/jobs/create"
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                  isActive
-                    ? "bg-blue-50 text-blue-600"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                }`
-              }
+              className={navLinkClass}
             >
               <PlusCircle className="h-5 w-5" />
               Post a Job
@@ -62,16 +52,15 @@ function DashboardLayout() {
 
             <NavLink
               to="/dashboard/profile"
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                  isActive
-                    ? "bg-blue-50 text-blue-600"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                }`
-              }
+              className={navLinkClass}
             >
               <CircleUserRound className="h-5 w-5" />
               Profile
+            </NavLink>
+
+            <NavLink to="/dashboard/companies" className={navLinkClass}>
+              <Building2 className="h-5 w-5" />
+              My Companies
             </NavLink>
           </nav>
         </aside>
