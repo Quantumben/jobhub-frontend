@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { Building2, MapPin, Search } from "lucide-react";
 
@@ -49,9 +49,8 @@ function CompaniesPage() {
   |--------------------------------------------------------------------------
   */
 
-  useEffect(() => {
+  useCallback(() => {
     setSearchInput(search);
-
     setLocationInput(location);
   }, [search, location]);
 

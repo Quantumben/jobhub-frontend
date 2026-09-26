@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { AlertCircle, BriefcaseBusiness, MapPin, Search } from "lucide-react";
 
@@ -65,11 +65,16 @@ function JobsPage() {
   |
   */
 
-  useEffect(() => {
+  useCallback(() => {
     setSearchInput(search);
-
     setLocationInput(location);
   }, [search, location]);
+
+  //   useEffect(() => {
+  //     setSearchInput(search);
+
+  //     setLocationInput(location);
+  //   }, [search, location]);
 
   /*
   |--------------------------------------------------------------------------
